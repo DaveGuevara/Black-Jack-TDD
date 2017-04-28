@@ -12,14 +12,17 @@ public class Player
 	private int cardsHolding;		// number of cards the player is currently holdling
 	private Card[] holdingHand = new Card[21];  // array of playing cards (max 21)
 	private int BetMoney;		// bet money
+	private int BuyIn; 	// buy in money (amount required to start each game)
 	
 	///constructor
-	public Player(String name, int betMoney) 
+	public Player(String name, int buyin) 
 	{
 		this.Name = name;
-		this.BetMoney = betMoney;
+		this.BetMoney = buyin;
 		this.emptyHand();
+		this.BuyIn = buyin;
 	}
+	
 	
 	//STORE ASSIGNED CARD
 	public boolean addCard(Card card) 
@@ -38,10 +41,16 @@ public class Player
 	}
 
 	// ADJUST BET MONEY
-	public void adjustBetMoney(int betmoney)
+	public boolean adjustBetMoney(int betmoney)
 	{
-		this.BetMoney += (betmoney);
+		// bet exceed balance		
+		if (betmoney < 0 & Math.abs(betmoney) > this.BetMoney){ return false; }
+		
+		this.BetMoney += betmoney;  //subtracting money from your balance
+		return true;		
 	}
+	
+	
 	
 	// GET SUM OF CURRENT HAND
 	public int getHandSum()
@@ -53,16 +62,36 @@ public class Player
 		
 		return holdingTotal;
 	}
-	
 	// Get Number of cards holding
 	public int getCardCount()
 	{
 		return this.cardsHolding;
 	}
-
+	// Get Number of cards holding
+	public int getBetMoneyBalance()
+	{
+		return this.BetMoney;
+	}
+	// Get holding cards
+	public Card[] getHoldingCards()
+	{
+		return this.holdingHand;
+	}
+	// RESET player to play a new game
+	public void Reset()
+	{
+		this.BetMoney = this.BuyIn;
+		this.emptyHand();
+	}
+	// Print dealer name
+	public String ToString()
+	{
+		return this.Name;
+	}
+	
 	
 	//HELPER -- Empty hand 
-	public void emptyHand() 
+ 	public void emptyHand() 
 	{
 		for (int i = 0; i < 21; i++) 
 		{  //Set it to Null
