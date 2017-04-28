@@ -8,9 +8,10 @@ package Game;
  */
 
 //4 Suits That are In the Deck
-public enum Suit {
-
-	Clubs("Clubs"),	Diamonds("Diamonds"), Spades("Spades"),	Hearts("Spades");
+public enum Suit 
+{
+	//clubs - 0, diamonds - 1, spades - 2, hearts - 3
+	Clubs("Clubs"),	Diamonds("Diamonds"), Spades("Spades"),	Hearts("Hearts");
 	
 	private String Suit;
 

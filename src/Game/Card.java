@@ -1,5 +1,4 @@
 package Game;
-import java.util.*;
 
 /**  
  * Creation of cards 
@@ -18,6 +17,7 @@ public class Card {
 		try
 		{
 			this.suit = suit;
+			this.CardNumber = cardnumber;
 			if(cardnumber == 1)
 			{
 				this.CardValue = 11;	
@@ -56,8 +56,8 @@ public class Card {
 				case 1:
 					rtn = "Ace";
 					break;
-				case 2-10:
-					rtn = String.valueOf(this.CardNumber);
+				case 2:
+					rtn = String.valueOf(this.CardNumber).toString();
 					break;
 				case 11:
 					rtn = "Jack";
@@ -69,7 +69,7 @@ public class Card {
 					rtn = "King";
 					break;
 			}
-			return rtn += " of " + this.suit.toString();
+			return rtn + " of " + this.suit.toString();
 		}
 	}
 	
