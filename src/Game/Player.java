@@ -44,7 +44,7 @@ public class Player
 	public boolean adjustBetMoney(int betmoney)
 	{
 		// bet exceed balance		
-		if (betmoney < 0 & Math.abs(betmoney) > this.BetMoney){ return false; }
+		if (betmoney < 0 && Math.abs(betmoney) > this.BetMoney){ return false; }
 		
 		this.BetMoney += betmoney;  //subtracting money from your balance
 		return true;		
