@@ -31,10 +31,6 @@ public class Game
 	}
 	
 	// Game Activities
-	public void ShuffleCurrentDeck()
-	{
-		this.deck.shuffle();
-	}
 	public void Restart()
 	{
 		this.player = new Player("Player 1", 1000);
@@ -42,34 +38,50 @@ public class Game
 		this.deck = new Deck();
 		this.BetPot = 0;
 	}
+	public void GetNewDeck()
+	{
+		this.deck = new Deck();
+	}
+	public void ShuffleCurrentDeck()
+	{
+		this.deck.shuffle();
+	}
 	public void ClearHoldingCards()
 	{
-		player.emptyHand();
-		dealer.emptyHand();
+		this.player.emptyHand();
+		this.dealer.emptyHand();
 	}
-	public void DealHand()
+	public boolean DealHand()
 	{
-		this.DealHand("");
+		return this.DealHand(Selector.Both);
 	}
-	public void DealHand(String selection)
+	public boolean DealHand(Selector Selection)
 	{
-		switch(selection.toLowerCase())
+		boolean rtn = true;
+		
+		switch(Selection)
 		{
-			case "player":
+			case Player:
 				if (this.deck.CardsOnDeck() < 2) { this.deck.RefillDeck(true); }
 				this.player.addCard(deck.nextCard());
 				break;
-			case "dealer":
+			case Dealer:
 				if (this.deck.CardsOnDeck() < 2) { this.deck.RefillDeck(true); }
+				this.dealer.addCard(deck.nextCard());
+				break;
+			case Both:
+				if (this.deck.CardsOnDeck() < 2) { this.deck.RefillDeck(true); }
+				this.player.addCard(deck.nextCard());
 				this.dealer.addCard(deck.nextCard());
 				break;
 			default:
-				if (this.deck.CardsOnDeck() < 2) { this.deck.RefillDeck(true); }
-				this.player.addCard(deck.nextCard());
-				this.dealer.addCard(deck.nextCard());
-				break;		
+				rtn = false;
+				break;
 		}
+		
+		return rtn;
 	}
+	
 	public void AddBetPot(int potamount)
 	{
 		this.player.adjustBetMoney(-potamount);
@@ -78,66 +90,112 @@ public class Game
 		this.dealer.adjustBetMoney(-potamount);
 		this.BetPot += potamount;
 	}
-	public void CheckHands()
-	{
-		//if(dealerSum > 21 || mySum > dealerSum && mySum <= 21 || mySum < dealerSum && mySum >= 21 && money > 0)
-		//if(this.GetPlayerHandSum() > 
-		
-	}
-	public boolean CheckPlayerWins()
-	{
-		return true;
-	}
-	public void PayOut(String seletion)
-	{
-		if(seletion == "dealer"){
-			this.dealer.adjustBetMoney(this.BetPot);
-			this.BetPot = 0;
-		}
-		else
-		{
-			this.player.adjustBetMoney(this.BetPot);
-			this.BetPot = 0;
-		}
-	}
 	
+	public Selector DecideWinner()
+	{
+		int Goal = 21;
+		int playerSum = this.player.getHandSum();
+		int dealerSum = this.dealer.getHandSum();
+		
+		// Declare a tie
+		if (playerSum == dealerSum) { return Selector.Both;}			
+		// Player has blackjack
+		if (this.player.getHandSum() == 21) { return Selector.Player; }
+		// Dealer has blackjack
+		if (this.dealer.getHandSum() == 21)	{ return Selector.Dealer; }
+		
+		// Since none of the above options work, then Closest to 21 wins
+		int playerMod = Goal % playerSum;
+		int dealerMod = Goal % dealerSum;
+		
+		//smallest modulo wins
+		return (playerMod<dealerMod)? Selector.Player : Selector.Dealer; 		
+	}
+	public void PayOut(Selector selection)
+	{
+		switch(selection)
+		{
+			case Player:
+				this.player.adjustBetMoney(this.BetPot);
+				this.BetPot = 0;
+				break;
+			case Dealer:
+				this.dealer.adjustBetMoney(this.BetPot);
+				this.BetPot = 0;
+				break;
+			case Both:
+				int tiePot = this.BetPot/2;
+				this.player.adjustBetMoney(tiePot);
+				this.dealer.adjustBetMoney(tiePot);
+				this.BetPot = 0;
+				break;	
+			default:				
+				break;
+		}	
+	}
+
 	
 	
 	// --------------------------- Not used in Junit, they only access already tested player controls ------------------
 	// Player Accessibility
-	public Card[] GetPlayerHoldingCards()
-	{
-		return player.getHoldingCards();
+	public Card[] GetHoldingCards(Selector selection)
+	{		
+		switch(selection)
+		{
+			case Player:
+				return this.player.getHoldingCards();				
+			case Dealer:
+				return this.dealer.getHoldingCards();				
+			default:
+				return null;				
+		}		
 	}
-	public int GetPlayerCardCount()
+	public int GetCardCount(Selector selection)
 	{
-		return player.getCardCount();
+		switch(selection)
+		{
+			case Player:
+				return this.player.getCardCount();				
+			case Dealer:
+				return this.dealer.getCardCount();				
+			default:
+				return 0;				
+		}				
 	}
-	public int GetPlayerBetBalance()
+	public int GetBetBalance(Selector selection)
 	{
-		return player.getBetMoneyBalance();
+		switch(selection)
+		{
+			case Player:
+				return this.player.getBetMoneyBalance();				
+			case Dealer:
+				return this.dealer.getBetMoneyBalance();				
+			default:
+				return 0;				
+		}				
 	}
-	public int GetPlayerHandSum()
+	public int GetHandSum(Selector selection)
 	{
-		return player.getHandSum();
+		switch(selection)
+		{
+			case Player:
+				return this.player.getHandSum();				
+			case Dealer:
+				return this.dealer.getHandSum();				
+			default:
+				return 0;				
+		}			
 	}
-	
-	// Dealer Accessibility
-	public Card[] GetDealerHoldingCards()
+	public boolean GetBust(Selector selection)
 	{
-		return dealer.getHoldingCards();
+		switch(selection)
+		{
+			case Player:
+				return this.player.getBust();				
+			case Dealer:
+				return this.dealer.getBust();				
+			default:
+				return false;				
+		}	
 	}
-	public int GetDealerCardCount()
-	{
-		return dealer.getCardCount();
-	}
-	public int GetDealerBetBalance()
-	{
-		return dealer.getBetMoneyBalance();
-	}
-	public int GetDealerHandSum()
-	{
-		return dealer.getHandSum();
-	}
-	
 }

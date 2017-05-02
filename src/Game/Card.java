@@ -11,16 +11,19 @@ public class Card {
 	private Suit suit;
 	private int CardNumber;
 	private int CardValue;
+	private boolean isAce;
 	
 	public Card(Suit suit, int cardnumber) 
 	{	
 		try
 		{
+			this.isAce = false;
 			this.suit = suit;
 			this.CardNumber = cardnumber;
 			if(cardnumber == 1)
 			{
-				this.CardValue = 11;	
+				this.CardValue = 11;
+				this.isAce = true;
 			}
 			else if (cardnumber > 9)
 			{
@@ -38,6 +41,11 @@ public class Card {
 		}
 	}	
 	
+	// needs test
+	public boolean isAce()
+	{ 
+		return this.isAce;
+		}
 	public int GetCardValue()
 	{
 		return this.CardValue;

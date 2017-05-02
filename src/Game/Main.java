@@ -42,27 +42,42 @@ public class Main
 		sc.close();
 	}
 	
+	
+	
+	
 	// Game Logic
 	public static boolean StartNewMatch()
 	{
+		System.out.println("\nNew BlackJack table created for you.");
+		
 		// refresh the game 
-		//gm.Restart();
+		//gm.GetNewDeck();
+		System.out.println("Dealer gets a new deck.");
+		//gm.ShuffleCurrentDeck();
+		System.out.println("Dealer shuffles the deck.");
 		
-		// Dealing the first 2 hands
-		gm.DealHand();
-		gm.DealHand();
 		
-		System.out.println("Player has " + gm.GetPlayerCardCount() + " cards.");
-		PrintCards(gm.GetPlayerHoldingCards(), true);
+		// Dealing the first 2 hands to Player One at a time
+		gm.DealHand(Selector.Player);
+		gm.DealHand(Selector.Player);
 		
-		System.out.println("Dealer has " + gm.GetDealerCardCount() + " cards.");
-		PrintCards(gm.GetDealerHoldingCards(), false );
+		// Dealing the first 2 hands to Player One at a time
+		gm.DealHand(Selector.Dealer);
+		gm.DealHand(Selector.Dealer);
+		
+		
+		System.out.println("Cards have been dealt, here are the playing cards:\n");
+		// print current cards
+		PrintCards(Selector.Player, true);						
+		PrintCards(Selector.Dealer, false);
 		
 		
 		// collect bet
 		int betamount;
-		System.out.println("\nYour current balance is $ " + gm.GetPlayerBetBalance() + "\nDealer's balance is $ " + gm.GetDealerBetBalance() +"\n");
-		System.out.println("How much would you like to bet?");
+		PrintBalance(Selector.Player);
+		PrintBalance(Selector.Dealer);
+		
+		System.out.println("\nHow much would you like to bet?");
 		betamount = sc.nextInt();
 		gm.AddBetPot(betamount);
 		
@@ -71,32 +86,38 @@ public class Main
 		String inputchoice = "";
 		while(addcard)
 		{			
-			System.out.print("Add A Card 'YES' Or 'NO'?");
+			System.out.print("\nAdd A Card 'YES' Or 'NO'?");
 			inputchoice = sc.next();
 			System.out.println();
 			
 			// request additional card
 			if(inputchoice.compareToIgnoreCase("YES") == 0) 
 			{
-				gm.DealHand("player");
+				gm.DealHand(Selector.Player);
 				addcard = true;
 				// Print Cards
-				System.out.println("Player has " + gm.GetPlayerCardCount() + " cards.");
-				PrintCards(gm.GetPlayerHoldingCards(), true);
-				
-				System.out.println("Dealer has " + gm.GetDealerCardCount() + " cards.");
-				PrintCards(gm.GetDealerHoldingCards(), false );
+				PrintCards(Selector.Player, true);											
+				PrintCards(Selector.Dealer, false );
 			}
 			else if(inputchoice.compareToIgnoreCase("NO") == 0)
 			{
 				addcard = false;
-			}
-			
-			// check if dealer needs card?
-			if (gm.GetDealerHandSum() < 17)
-			{
-				gm.DealHand("dealer");
+			}			
+		}
 				
+		////////////////////// ------  DECIDING WINNER -------///////////
+		// if player busts then dealer wins
+		if(gm.GetBust(Selector.Player))
+		{
+			PrintWinner(Selector.Dealer);
+			gm.PayOut(Selector.Dealer); 			
+		}
+		else 
+		{		
+			// check if dealer needs card?
+			if (gm.GetHandSum(Selector.Dealer) < 17)
+			{
+				gm.DealHand(Selector.Dealer);				
 			}
 			else
 			{
@@ -104,34 +125,28 @@ public class Main
 			}
 		}
 		
-		
-		// Print Cards showing dealers total hands
-		System.out.println("Player has " + gm.GetPlayerCardCount() + " cards.");
-		PrintCards(gm.GetPlayerHoldingCards(), true);
-		
-		System.out.println("Dealer has " + gm.GetDealerCardCount() + " cards.");
-		PrintCards(gm.GetDealerHoldingCards(), true );
-		
-		// decide on winner
-		if(gm.CheckPlayerWins())
+		// if dealer busts then player wins
+		if (gm.GetBust(Selector.Dealer))
 		{
-			//player wins
-			gm.PayOut("player");
-			System.out.println("\nCongratulations, you won!! ");
+			PrintWinner(Selector.Player);
+			gm.PayOut(Selector.Player); 
 		}
-		else
+		else 
 		{
-			//dealer wins
-			gm.PayOut("dealer");
-			System.out.println("\nDealer won!! ");
-		}
+			// Neither busts (sum is <= 21) Decide who is the closest to 21
+			Selector handwinner = gm.DecideWinner();
+			PrintWinner(handwinner);
+			gm.PayOut(handwinner);
+		}		
+		////////////---------------------------------//////////
 		
 		// print balance after selecting winner
-		System.out.println("\nAfter this game your balance is $ " + gm.GetPlayerBetBalance() + "\nand Dealer's balance is $ " + gm.GetDealerBetBalance() +"\n");
+		PrintBalance(Selector.Player);
+		PrintBalance(Selector.Dealer);
 		
 		// ---- PLAY AGAIN -----
 		boolean rtn = false;
-		System.out.println("Would you like to play again 'yes' or 'no'? \n");
+		System.out.println("\nWould you like to play again 'yes' or 'no'? \n");
 		sc.hasNext();
 					
 		String option1 = "yes";
@@ -143,13 +158,13 @@ public class Main
 		if(answer.equalsIgnoreCase(option1))
 		{
 			rtn = true;
-			//rest deck ==> shuffle
-			// clear holding hands from players
-			//
+			gm.ClearHoldingCards();
 		}
 		else if (answer.equalsIgnoreCase(option2))
 		{
 			rtn = false;
+			// CASHOUT
+			System.out.println("You have elected not to play again and CASH OUT.  Your $ " + gm.GetBetBalance(Selector.Player) + " will be paid to you at the door.");
 		}
 		// ------------
 		
@@ -159,15 +174,46 @@ public class Main
 	
 	
 	// HELPER methods
-	public static void PrintCards(Card[] cards, boolean printfirstcard)
+	public static void PrintCards(Selector selection, boolean printfirstcard)
 	{
+		System.out.println(selection.toString() + " has " + gm.GetCardCount(selection) + " cards.");
+		
+		Card[] cards = gm.GetHoldingCards(selection);
 		for(int x=0; x<cards.length; x++)
 		{
 			boolean print = (x == 0 && !printfirstcard)? false: true;
 			
 			Card tmpCard = cards[x];
 			if(tmpCard != null && print){ System.out.println(tmpCard.ToString()); }
-			if(!print){ System.out.println("FOLDED CARD");}
+			if(!print){ System.out.println("HOLE CARD");}
 		}
+	}
+	public static void PrintBalance(Selector selection)
+	{
+		System.out.println(selection.toString() + " current balance is $ " + gm.GetBetBalance(selection));
+	}
+	public static void PrintWinner(Selector selection)
+	{
+		// Print Cards showing dealers total hands		
+		PrintCards(Selector.Player, true);				
+		PrintCards(Selector.Dealer, true );
+		
+		switch(selection)
+		{
+			case Player:
+				System.out.println("\n\nYou WIN!!!");
+				break;
+			case Dealer:
+				System.out.println("\n\nDealer WINS!!!");
+				break;
+			case Both:
+				System.out.println("\n\nIt's a TIE!!!");
+				break;
+			case Unknown:
+				break;
+			default:
+				break;
+		}
+		
 	}
 }

@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import Game.Player;
+import Game.Suit;
+import Game.Card;
 import Game.Deck;
 
 
@@ -43,12 +45,47 @@ public class PlayerTest
 		assertEquals(11, p1.getHandSum());
 	}
 	@Test
-	public void ValueAfterFullSuitOfUnsortedDeck() 
+	public void ValueOfTwoAces() 
 	{	
-		Deck dk = new Deck();
-		for (int num=1; num<=13; num++){	p1.addCard(dk.nextCard()); }
+		p1.addCard(new Card(Suit.Clubs,1));
+		p1.addCard(new Card(Suit.Diamonds,1));
 		
-		assertEquals(95, p1.getHandSum());
+		assertEquals(12, p1.getHandSum());
+	}
+	@Test
+	public void ValueOfSoft17() 
+	{	
+		p1.addCard(new Card(Suit.Clubs,1));
+		p1.addCard(new Card(Suit.Diamonds,6));
+		
+		assertEquals(17, p1.getHandSum());
+	}
+	@Test
+	public void ValueOfTwoAcesNine() 
+	{	
+		p1.addCard(new Card(Suit.Clubs,1));
+		p1.addCard(new Card(Suit.Diamonds,1));
+		p1.addCard(new Card(Suit.Hearts,9));
+		
+		assertEquals(21, p1.getHandSum());
+	}
+	@Test
+	public void isBust() 
+	{	
+		p1.addCard(new Card(Suit.Clubs,1));
+		p1.addCard(new Card(Suit.Diamonds,1));
+		p1.addCard(new Card(Suit.Spades,10));
+		p1.addCard(new Card(Suit.Hearts,12));
+		
+		assertEquals(true, p1.getBust());
+	}
+	@Test
+	public void NotBust() 
+	{	
+		p1.addCard(new Card(Suit.Clubs,1));
+		p1.addCard(new Card(Suit.Diamonds,8));		
+		
+		assertEquals(false, p1.getBust());
 	}
 	@Test
 	public void AddingOver21Cards() 

@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import Game.Game;
 import Game.Player;
+import Game.Selector;
 import Game.Deck;
 import Game.Card;
 
@@ -22,7 +23,7 @@ public class GameTest
 	@Test
 	public void GameStarts() throws Exception
 	{	
-		assertEquals(gm.GetPlayerCardCount(),gm.GetDealerCardCount());
+		assertEquals(gm.GetCardCount(Selector.Player),gm.GetCardCount(Selector.Dealer));
 	}
 	@Test
 	public void Restart() throws Exception
@@ -31,7 +32,7 @@ public class GameTest
 		gm.DealHand();
 		gm.DealHand();
 		gm.Restart();
-		assertEquals(0,gm.GetDealerCardCount());
+		assertEquals(0,gm.GetCardCount(Selector.Dealer));
 	}
 	@Test
 	public void ClearHoldingCards() throws Exception
@@ -39,13 +40,13 @@ public class GameTest
 		gm.DealHand();
 		gm.DealHand();
 		gm.ClearHoldingCards();
-		assertEquals(0,gm.GetDealerCardCount());
+		assertEquals(0,gm.GetCardCount(Selector.Dealer));
 	}
 	@Test
 	public void DealHand() throws Exception
 	{
 		gm.DealHand();
-		assertEquals(1,gm.GetDealerCardCount());
+		assertEquals(1,gm.GetCardCount(Selector.Dealer));
 	}
 	
 	

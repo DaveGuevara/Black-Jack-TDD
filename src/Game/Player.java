@@ -8,11 +8,13 @@ package Game;
  */
 public class Player 
 {
-	private String Name; 		// name of current player
-	private int cardsHolding;		// number of cards the player is currently holdling
+	private String Name; 						// name of current player
+	private int cardsHolding;					// number of cards the player is currently holdling
 	private Card[] holdingHand = new Card[21];  // array of playing cards (max 21)
-	private int BetMoney;		// bet money
-	private int BuyIn; 	// buy in money (amount required to start each game)
+	private int BetMoney;						// bet money
+	private int BuyIn; 							// buy in money (amount required to start each game)
+	private int NumberOfAces; 					// keep track of the number of aces in a hand
+	private boolean Bust;						// set to true if score is > 21
 	
 	///constructor
 	public Player(String name, int buyin) 
@@ -21,6 +23,7 @@ public class Player
 		this.BetMoney = buyin;
 		this.emptyHand();
 		this.BuyIn = buyin;
+		this.NumberOfAces = 0;		
 	}
 	
 	
@@ -29,8 +32,9 @@ public class Player
 	{
 		if(this.getCardCount() < 21)
 		{
-			this.holdingHand[this.cardsHolding] = card;
+			this.holdingHand[this.cardsHolding] = card;			
 			this.cardsHolding++;
+			if (card.isAce()) { this.NumberOfAces++; }
 			
 			return true;
 		}
@@ -56,9 +60,16 @@ public class Player
 	public int getHandSum()
 	{
 		int holdingTotal = 0;
+		int aces = this.NumberOfAces;
 		
 		//Sum of the cards in hand or count
 		for (int i = 0; i < this.cardsHolding; i++) { holdingTotal += this.holdingHand[i].GetCardValue();}
+
+		while(aces > 0)
+		{
+			if (holdingTotal > 21){ holdingTotal -= 10; aces--;}
+			else { break;}
+		}
 		
 		return holdingTotal;
 	}
@@ -83,10 +94,15 @@ public class Player
 		this.BetMoney = this.BuyIn;
 		this.emptyHand();
 	}
-	// Print dealer name
+	// Print name
 	public String ToString()
 	{
 		return this.Name;
+	}
+	// Get Bust
+	public boolean getBust()
+	{
+		if(this.getHandSum() > 21){ return true; } else { return false;}		
 	}
 	
 	
