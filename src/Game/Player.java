@@ -104,7 +104,11 @@ public class Player
 	{
 		if(this.getHandSum() > 21){ return true; } else { return false;}		
 	}
-	
+	// Get Buy In amount
+	public int getBuyIn()
+	{
+		return this.BuyIn;
+	}
 	
 	//HELPER -- Empty hand 
  	public void emptyHand() 

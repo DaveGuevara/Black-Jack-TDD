@@ -1,4 +1,5 @@
 package Game;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main
@@ -27,6 +28,7 @@ public class Main
 				while(playagain){
 					playagain = StartNewMatch();
 				}
+				gm.Restart();
 				outerloop = true;
 			}
 			else if (answer.equalsIgnoreCase(option2))
@@ -73,14 +75,49 @@ public class Main
 		
 		
 		// collect bet
-		int betamount;
+		int betamount = 0;
+		int max = gm.GetBetBalance(Selector.Player);
+		boolean goingBet = true;
+		
+		
 		PrintBalance(Selector.Player);
 		PrintBalance(Selector.Dealer);
 		
-		System.out.println("\nHow much would you like to bet?");
-		betamount = sc.nextInt();
-		gm.AddBetPot(betamount);
-		
+		while(goingBet == true)
+		{
+			boolean imputTest = true;
+			
+			while(imputTest)
+			{
+				System.out.println("\nHow much would you like to bet?");
+				
+				String temp = sc.next();
+				
+				try
+				{
+					betamount = Integer.parseInt(temp);
+					imputTest = false;
+				}
+				catch (Exception e)
+				{
+					System.out.println("Please Enter A Valid Amount");
+					imputTest =true;
+				}
+			}
+			
+			if(betamount <= max) // && betamount <= 2000 && max < 2000)
+			{
+				gm.AddBetPot(betamount);
+				goingBet = false; 
+			}
+			else if (betamount >= max) // && betamount >= 2000)
+			{
+				System.out.println("No Sufficent Funds, Please Enter Less Than $" + gm.GetBetBalance(Selector.Player));
+				goingBet = true;
+			}
+		}
+	
+	
 		// Loop for adding another card
 		boolean addcard = true;
 		String inputchoice = "";
@@ -144,27 +181,50 @@ public class Main
 		PrintBalance(Selector.Player);
 		PrintBalance(Selector.Dealer);
 		
+		
+		// check if player current balance > (2Xbuy in) then no option to play again.
+		
 		// ---- PLAY AGAIN -----
 		boolean rtn = false;
-		System.out.println("\nWould you like to play again 'yes' or 'no'? \n");
-		sc.hasNext();
-					
-		String option1 = "yes";
-		String option2 = "no";
-		
-		String answer;
-		answer = sc.next();
-				
-		if(answer.equalsIgnoreCase(option1))
+		boolean askplayagain = true;
+		if (gm.GetBetBalance(Selector.Player) ==0 ) 
 		{
-			rtn = true;
-			gm.ClearHoldingCards();
+			// print sorry, you lost all your money. you can start a news game.
+			System.out.println("SORRY!! You've lost all your bet money.  Feel free to start a new game.");
+			return false;
+			
 		}
-		else if (answer.equalsIgnoreCase(option2))
+
+		if ( gm.GetBetBalance(Selector.Player) >= (2 * gm.GetBuyIn(Selector.Player)))
 		{
-			rtn = false;
-			// CASHOUT
-			System.out.println("You have elected not to play again and CASH OUT.  Your $ " + gm.GetBetBalance(Selector.Player) + " will be paid to you at the door.");
+			// print .. you've doubled your initial buy it.  you can cash out and start a new game
+			System.out.println("Congratulations! you've doubled your initial buy in.  You must start a new game.");
+			PrintCashOut(Selector.Player);
+			askplayagain = false;
+		}
+		
+		if (askplayagain)
+		{
+			System.out.println("\nWould you like to play again 'yes' or 'no'? \n");
+			sc.hasNext();
+						
+			String option1 = "yes";
+			String option2 = "no";
+			
+			String answer;
+			answer = sc.next();
+					
+			if(answer.equalsIgnoreCase(option1))
+			{
+				rtn = true;
+				gm.ClearHoldingCards();
+			}
+			else if (answer.equalsIgnoreCase(option2))
+			{
+				rtn = false;
+				// CASHOUT
+				PrintCashOut(Selector.Player);
+			}
 		}
 		// ------------
 		
@@ -215,5 +275,9 @@ public class Main
 				break;
 		}
 		
+	}
+	public static void PrintCashOut(Selector selection)
+	{
+		System.out.println("You have elected not to play again and CASH OUT.  Your $ " + gm.GetBetBalance(selection) + " will be paid to you at the door.");
 	}
 }

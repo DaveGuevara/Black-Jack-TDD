@@ -9,7 +9,7 @@ public class Game
 	
 	// Constructor
 	public Game()
-	{
+	{	
 		this.player = new Player("Player 1", 1000);
 		this.dealer = new Player("Dealer", 10000);
 		this.deck = new Deck();
@@ -197,5 +197,17 @@ public class Game
 			default:
 				return false;				
 		}	
+	}
+	public int GetBuyIn(Selector selection)
+	{
+		switch(selection)
+		{
+			case Player:
+				return this.player.getBuyIn();				
+			case Dealer:
+				return this.dealer.getBuyIn();				
+			default:
+				return 0;				
+		} 
 	}
 }
