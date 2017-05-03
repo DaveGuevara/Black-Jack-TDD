@@ -118,6 +118,7 @@ public class Player
 		}
 		//set the # to 0 of card
 		this.cardsHolding = 0;
+		this.NumberOfAces = 0;
 	}
  	// RESET player to play a new game
  	public void Reset()
