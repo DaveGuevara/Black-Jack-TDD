@@ -88,17 +88,6 @@ public class Player
 	{
 		return this.holdingHand;
 	}
-	// RESET player to play a new game
-	public void Reset()
-	{
-		this.BetMoney = this.BuyIn;
-		this.emptyHand();
-	}
-	// Print name
-	public String ToString()
-	{
-		return this.Name;
-	}
 	// Get Bust
 	public boolean getBust()
 	{
@@ -110,6 +99,16 @@ public class Player
 		return this.BuyIn;
 	}
 	
+	
+	
+	// Print name
+	public String ToString()
+	{
+		return this.Name;
+	}
+
+	
+	
 	//HELPER -- Empty hand 
  	public void emptyHand() 
 	{
@@ -120,4 +119,10 @@ public class Player
 		//set the # to 0 of card
 		this.cardsHolding = 0;
 	}
+ 	// RESET player to play a new game
+ 	public void Reset()
+ 	{
+ 		this.BetMoney = this.BuyIn;
+ 		this.emptyHand();
+ 	}
 }

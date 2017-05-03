@@ -41,7 +41,6 @@ public class Card {
 		}
 	}	
 	
-	// needs test
 	public boolean isAce()
 	{ 
 		return this.isAce;

@@ -1,5 +1,5 @@
 package Game;
-import java.util.InputMismatchException;
+
 import java.util.Scanner;
 
 public class Main
@@ -45,17 +45,15 @@ public class Main
 	}
 	
 	
-	
-	
 	// Game Logic
 	public static boolean StartNewMatch()
 	{
 		System.out.println("\nNew BlackJack table created for you.");
 		
 		// refresh the game 
-		//gm.GetNewDeck();
+		gm.GetNewDeck();
 		System.out.println("Dealer gets a new deck.");
-		//gm.ShuffleCurrentDeck();
+		gm.ShuffleCurrentDeck();
 		System.out.println("Dealer shuffles the deck.");
 		
 		
@@ -205,32 +203,42 @@ public class Main
 		
 		if (askplayagain)
 		{
-			System.out.println("\nWould you like to play again 'yes' or 'no'? \n");
-			sc.hasNext();
+			boolean playagain = true;
+			while(playagain)
+			{
+				System.out.println("\nWould you like to play again 'yes' or 'no'? \n");
+				sc.hasNext();
+							
+				String option1 = "yes";
+				String option2 = "no";
+				
+				String answer;
+				answer = sc.next();
 						
-			String option1 = "yes";
-			String option2 = "no";
-			
-			String answer;
-			answer = sc.next();
-					
-			if(answer.equalsIgnoreCase(option1))
-			{
-				rtn = true;
-				gm.ClearHoldingCards();
-			}
-			else if (answer.equalsIgnoreCase(option2))
-			{
-				rtn = false;
-				// CASHOUT
-				PrintCashOut(Selector.Player);
+				if(answer.equalsIgnoreCase(option1))
+				{
+					rtn = true;
+					gm.ClearHoldingCards();
+					playagain = false;
+				}
+				else if (answer.equalsIgnoreCase(option2))
+				{
+					rtn = false;
+					// CASHOUT
+					PrintCashOut(Selector.Player);
+					playagain = false;
+				}
+				else
+				{
+					System.out.println("Invalid choice!");
+					playagain = true;				
+				}
 			}
 		}
 		// ------------
 		
 		return rtn;
 	}
-	
 	
 	
 	// HELPER methods

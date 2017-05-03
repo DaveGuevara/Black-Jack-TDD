@@ -81,7 +81,6 @@ public class Game
 		
 		return rtn;
 	}
-	
 	public void AddBetPot(int potamount)
 	{
 		this.player.adjustBetMoney(-potamount);
@@ -90,7 +89,6 @@ public class Game
 		this.dealer.adjustBetMoney(-potamount);
 		this.BetPot += potamount;
 	}
-	
 	public Selector DecideWinner()
 	{
 		int Goal = 21;

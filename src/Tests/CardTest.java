@@ -41,6 +41,18 @@ public class CardTest {
 		cd = new Card(Suit.Hearts,1);
 		assertEquals(11,cd.GetCardValue());	
 	}
+	@Test
+	public void isAce() 
+	{
+		cd = new Card(Suit.Hearts,1);
+		assertEquals(true,cd.isAce());	
+	}
+	@Test
+	public void isNotAce() 
+	{
+		cd = new Card(Suit.Hearts,9);
+		assertEquals(false,cd.isAce());	
+	}
 	
 	
 	// Print

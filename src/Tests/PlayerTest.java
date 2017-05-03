@@ -147,15 +147,50 @@ public class PlayerTest
 		
 		assertEquals(1000, p1.getBetMoneyBalance());
 	}
-	
-	
+	@Test
+	public void EmptyHand()
+	{
+		p1.addCard(new Card(Suit.Diamonds, 2));
+		p1.emptyHand();
+		
+		assertEquals(0, p1.getCardCount());
+	}
 	// Check Dealer Balance
 	@Test
 	public void DealerBetMoney() 
 	{				
 		assertEquals(10000, dlr.getBetMoneyBalance());
 	}
-	
+	@Test
+	// buy in
+	public void PlayerBuyIn()
+	{
+		assertEquals(1000, p1.getBuyIn());
+	}
+	@Test
+	public void PlayerNewlyDefinedBuyIn()
+	{
+		Player newPlayer = new Player("Player 1",5000);
+		
+		assertEquals(5000, newPlayer.getBuyIn());
+	}
+	@Test
+	public void GetBustTrue()
+	{
+		p1.addCard(new Card(Suit.Diamonds, 10));
+		p1.addCard(new Card(Suit.Hearts, 8));
+		p1.addCard(new Card(Suit.Spades, 7));
+		
+		assertEquals(true, p1.getBust());
+	}
+	@Test
+	public void GetBustFalse()
+	{
+		p1.addCard(new Card(Suit.Diamonds, 10));
+		p1.addCard(new Card(Suit.Hearts, 8));
+		
+		assertEquals(false, p1.getBust());
+	}
 	
 	// Check Dealer Balance
 	@Test
