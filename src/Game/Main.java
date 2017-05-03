@@ -103,12 +103,12 @@ public class Main
 				}
 			}
 			
-			if(betamount <= max) // && betamount <= 2000 && max < 2000)
+			if(betamount <= max) 
 			{
 				gm.AddBetPot(betamount);
 				goingBet = false; 
 			}
-			else if (betamount >= max) // && betamount >= 2000)
+			else if (betamount >= max) 
 			{
 				System.out.println("No Sufficent Funds, Please Enter Less Than $" + gm.GetBetBalance(Selector.Player));
 				goingBet = true;
